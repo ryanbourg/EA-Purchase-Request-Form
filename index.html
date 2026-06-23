@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Purchase Request Form</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; color: #1a1a1a; min-height: 100vh; padding: 2rem 1rem; }
+  .container { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .subtitle { font-size: 14px; color: #666; margin-bottom: 2rem; }
+  .card { background: #fff; border: 1px solid #e5e5e3; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
+  .section-label { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 12px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 13px; color: #555; }
+  input, select, textarea {
+    width: 100%; padding: 8px 12px; font-size: 14px; font-family: inherit;
+    border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #1a1a1a;
+    outline: none; transition: border-color 0.15s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: #888; }
+  textarea { min-height: 90px; resize: vertical; }
+  .btn-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
+  button {
+    padding: 8px 20px; font-size: 14px; font-family: inherit; font-weight: 500;
+    border: 1px solid #ccc; border-radius: 8px; background: #fff; color: #1a1a1a;
+    cursor: pointer; transition: background 0.15s;
+  }
+  button:hover { background: #f5f5f3; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  button.primary:hover { background: #333; }
+  .alert { padding: 10px 14px; border-radius: 8px; font-size: 14px; margin-bottom: 1rem; }
+  .alert-warning { background: #fef9ec; border: 1px solid #f5d87a; color: #7a5c00; }
+  .alert-error { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+  .alert-info { background: #eff6ff; border: 1px solid #93c5fd; color: #1e40af; }
+  .success-screen { text-align: center; padding: 3rem 1rem; display: none; }
+  .success-icon { width: 52px; height: 52px; border-radius: 50%; background: #dcfce7; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 22px; }
+  .summary { text-align: left; background: #f5f5f3; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0 1.5rem; font-size: 14px; }
+  .summary-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5e5e3; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row span:first-child { color: #666; }
+  .badge { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 6px; margin-right: 6px; }
+  .badge-success { background: #dcfce7; color: #166534; }
+  .badge-neutral { background: #f0f0ee; color: #666; }
+  .cfg-note { font-size: 12px; color: #999; margin-top: 8px; }
+  @media (max-width: 500px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="main-form">
+    <h1>Purchase request</h1>
+    <p class="subtitle">Submit this form to request approval for a large purchase.</p>
+
+    <input type="hidden" id="cfg-pubkey" value="Ismbw8oXZ5MrUKEqe" />
+    <input type="hidden" id="cfg-service" value="service_9sy4q1r" />
+    <input type="hidden" id="cfg-template" value="template_7lvjm0l" />
+    <input type="hidden" id="cfg-script" value="https://script.google.com/macros/s/AKfycbyugisXQlONH2L1IeZN4WuEtF5u3fF34Kx1K83L1GhkUSFXnMFV08BeEhWaIjfye2c3EQ/exec" />
+    <input type="hidden" id="cfg-mgr1" value="accounting@experienceanatomy.com" />
+    <input type="hidden" id="cfg-mgr2" value="jamie@experienceanatomy.com" />
+
+    <p class="section-label">Employee information</p>
+    <div class="card">
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="grid-2">
+          <div class="field">
+            <label>Full name</label>
+            <input type="text" id="emp-name" placeholder="Jane Smith" />
+          </div>
+          <div class="field">
+            <label>Department</label>
+            <input type="text" id="emp-dept" placeholder="e.g. Marketing" />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" id="emp-email" placeholder="jane@company.com" />
+          </div>
+          <div class="field">
+            <label>Date needed by</label>
+            <input type="date" id="emp-date" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Purchase details</p>
+    <div class="card">
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="field">
+          <label>Item or service name</label>
+          <input type="text" id="item-name" placeholder="e.g. Standing desk, Software license" />
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Estimated cost ($)</label>
+            <input type="number" id="item-cost" placeholder="0.00" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select id="item-category">
+              <option value="">Select a category</option>
+              <option>Equipment &amp; hardware</option>
+              <option>Software &amp; subscriptions</option>
+              <option>Furniture &amp; office supplies</option>
+              <option>Training &amp; education</option>
+              <option>Services &amp; contractors</option>
+              <option>Travel &amp; events</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Item website / product link</label>
+          <input type="url" id="item-url" placeholder="https://example.com/product" />
+        </div>
+        <div class="field">
+          <label>Business justification</label>
+          <textarea id="item-reason" placeholder="Describe why this purchase is needed and how it benefits the team or company..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div id="error-msg" class="alert alert-error" style="display:none;"></div>
+    <div id="status-msg" class="alert alert-info" style="display:none;"></div>
+
+    <div class="btn-row">
+      <button onclick="clearForm()">Clear form</button>
+      <button class="primary" id="submit-btn" onclick="submitForm()">Submit request →</button>
+    </div>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2 style="font-size:18px; font-weight:500; margin-bottom:8px;">Request submitted</h2>
+    <p style="font-size:14px; color:#666; margin-bottom:1.5rem;">Your request has been logged and the approval managers have been notified.</p>
+    <div class="summary" id="summary-box"></div>
+    <button onclick="resetForm()">Submit another request</button>
+  </div>
+
+</div>
+
+<script>
+
+
+
+
+function clearForm() {
+  ['emp-name','emp-dept','emp-email','emp-date','item-name','item-cost','item-reason','item-url'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('item-category').value = '';
+  document.getElementById('error-msg').style.display = 'none';
+  document.getElementById('status-msg').style.display = 'none';
+}
+
+async function submitForm() {
+  const pubkey    = document.getElementById('cfg-pubkey').value.trim();
+  const serviceId = document.getElementById('cfg-service').value.trim();
+  const templateId= document.getElementById('cfg-template').value.trim();
+  const scriptUrl = document.getElementById('cfg-script').value.trim();
+  const mgr1      = document.getElementById('cfg-mgr1').value.trim();
+  const mgr2      = document.getElementById('cfg-mgr2').value.trim();
+
+  const name      = document.getElementById('emp-name').value.trim();
+  const dept      = document.getElementById('emp-dept').value.trim();
+  const email     = document.getElementById('emp-email').value.trim();
+  const date      = document.getElementById('emp-date').value;
+  const item      = document.getElementById('item-name').value.trim();
+  const cost      = document.getElementById('item-cost').value.trim();
+  const category  = document.getElementById('item-category').value;
+  const itemUrl   = document.getElementById('item-url').value.trim();
+  const reason    = document.getElementById('item-reason').value.trim();
+
+  const errEl    = document.getElementById('error-msg');
+  const statusEl = document.getElementById('status-msg');
+
+  if (!name || !dept || !email || !item || !cost || !category || !reason) {
+    errEl.textContent = 'Please fill in all required fields before submitting.';
+    errEl.style.display = 'block';
+    statusEl.style.display = 'none';
+    return;
+  }
+  if (isNaN(cost) || parseFloat(cost) <= 0) {
+    errEl.textContent = 'Please enter a valid cost greater than $0.';
+    errEl.style.display = 'block';
+    statusEl.style.display = 'none';
+    return;
+  }
+  errEl.style.display = 'none';
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  statusEl.textContent = 'Sending...';
+  statusEl.style.display = 'block';
+
+  const timestamp    = new Date().toLocaleString();
+  const formattedCost= parseFloat(cost).toLocaleString('en-US', {style:'currency', currency:'USD'});
+  const dateLabel    = date ? new Date(date + 'T00:00:00').toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : 'Not specified';
+
+  let emailOk = false;
+  let sheetsOk = false;
+
+  if (pubkey && serviceId && templateId && (mgr1 || mgr2)) {
+    try {
+      emailjs.init(pubkey);
+      const managers = [mgr1, mgr2].filter(Boolean).join(', ');
+      await emailjs.send(serviceId, templateId, {
+        manager_emails: managers,
+        employee_name: name,
+        department: dept,
+        employee_email: email,
+        date_needed: dateLabel,
+        item_name: item,
+        category: category,
+        cost: formattedCost,
+        item_url: itemUrl || 'Not provided',
+        justification: reason,
+        submitted_at: timestamp
+      });
+      emailOk = true;
+    } catch(e) {
+      console.error('EmailJS error:', e);
+    }
+  }
+
+  if (scriptUrl) {
+    try {
+      await fetch(scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          timestamp, name, department: dept, email,
+          dateNeeded: dateLabel, item, category,
+          cost: parseFloat(cost).toFixed(2),
+          itemUrl: itemUrl || '',
+          justification: reason
+        })
+      });
+      sheetsOk = true;
+    } catch(e) {
+      console.error('Sheets error:', e);
+    }
+  }
+
+  const summaryEl = document.getElementById('summary-box');
+  summaryEl.innerHTML = `
+    <div class="summary-row"><span>Submitted by</span><span style="font-weight:500;">${name} — ${dept}</span></div>
+    <div class="summary-row"><span>Item</span><span style="font-weight:500;">${item}</span></div>
+    <div class="summary-row"><span>Category</span><span>${category}</span></div>
+    <div class="summary-row"><span>Estimated cost</span><span style="font-weight:500;">${formattedCost}</span></div>
+    <div class="summary-row"><span>Needed by</span><span>${dateLabel}</span></div>
+    ${itemUrl ? `<div class="summary-row"><span>Product link</span><a href="${itemUrl}" target="_blank" style="color:#2563eb;">${itemUrl}</a></div>` : ''}
+    <div class="summary-row" style="border:none; padding-top:8px;">
+      <span class="badge ${emailOk ? 'badge-success' : 'badge-neutral'}">${emailOk ? '✓ Email sent' : '— Email skipped'}</span>
+      <span class="badge ${sheetsOk ? 'badge-success' : 'badge-neutral'}">${sheetsOk ? '✓ Sheet logged' : '— Sheet skipped'}</span>
+    </div>`;
+
+  btn.disabled = false;
+  btn.textContent = 'Submit request →';
+  statusEl.style.display = 'none';
+  document.getElementById('main-form').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+}
+
+function resetForm() {
+  clearForm();
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('main-form').style.display = 'block';
+}
+</script>
+</body>
+</html>
